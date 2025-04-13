@@ -1,42 +1,51 @@
-// with json storage
-// import { NextApiRequest, NextApiResponse } from 'next';
-// import fs from 'fs';
-// import path from 'path';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { put } from '@vercel/blob';
 
-// const ticketsFilePath = path.join(process.cwd(), 'tickets.json');
-
-// export default function handler(req: NextApiRequest, res: NextApiResponse) {
-// 	const tickets = JSON.parse(fs.readFileSync(ticketsFilePath, 'utf-8'));
-
-// 	if (req.method === 'POST') {
-// 		const { name, issue } = req.body;
-// 		tickets.push({ name, issue });
-
-// 		// Save the updated tickets back to the file
-// 		fs.writeFileSync(ticketsFilePath, JSON.stringify(tickets, null, 2));
-
-// 		res.status(201).json({ message: 'Ticket created' });
-// 	} else if (req.method === 'GET') {
-// 		res.status(200).json(tickets);
-// 	} else {
-// 		res.setHeader('Allow', ['GET', 'POST']);
-// 		res.status(405).end(`Method ${req.method} Not Allowed`);
-// 	}
-// }
-//with memory storage
-import { NextApiRequest, NextApiResponse } from 'next';
-
-const tickets: { name: string; issue: string }[] = [];
-
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-	if (req.method === 'POST') {
-		const { name, issue } = req.body;
-		tickets.push({ name, issue });
-		res.status(201).json({ message: 'Ticket created' });
-	} else if (req.method === 'GET') {
-		res.status(200).json(tickets);
-	} else {
-		res.setHeader('Allow', ['GET', 'POST']);
-		res.status(405).end(`Method ${req.method} Not Allowed`);
+export default async function handler(
+	req: NextApiRequest,
+	res: NextApiResponse
+) {
+	if (req.method === 'GET') {
+		try {
+			const blobUrl =
+				'https://mirunas-projects-27a6e992.vercel-storage.com/tickets.json';
+			const response = await fetch(blobUrl);
+			const tickets = await response.json();
+			return res.status(200).json(tickets);
+		} catch (error) {
+			console.error('GET error:', error);
+			return res.status(500).json({ message: 'Error fetching tickets' });
+		}
 	}
+
+	if (req.method === 'POST') {
+		try {
+			const newTicket = req.body;
+			const { url } = await fetch('tickets.json');
+			const response = await fetch(url);
+			const tickets = await response.json();
+			const updatedTickets = [...tickets, newTicket];
+
+			const updatedBlob = await put(
+				'tickets.json',
+				JSON.stringify(updatedTickets, null, 2),
+				{
+					access: 'public',
+					token: process.env.VERCEL_BLOB_READ_WRITE_TOKEN,
+				}
+			);
+
+			return res
+				.status(200)
+				.json({ success: true, url: updatedBlob.url });
+		} catch (error) {
+			console.error('POST error:', error);
+			return res.status(500).json({ message: 'Error saving ticket' });
+		}
+	}
+
+	return res
+		.setHeader('Allow', ['GET', 'POST'])
+		.status(405)
+		.end(`Method ${req.method} Not Allowed`);
 }
