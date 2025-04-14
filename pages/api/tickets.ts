@@ -1,14 +1,15 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { put } from '@vercel/blob';
 
+const blobUrl =
+	'https://clgltu8txlutapga.public.blob.vercel-storage.com/tickets-pyCCTdxBoXrL01AhJ87jpa1SEMqUOV.json';
+
 export default async function handler(
 	req: NextApiRequest,
 	res: NextApiResponse
 ) {
 	if (req.method === 'GET') {
 		try {
-			const blobUrl =
-				'https://clgltu8txlutapga.public.blob.vercel-storage.com/tickets-pyCCTdxBoXrL01AhJ87jpa1SEMqUOV.json';
 			const response = await fetch(blobUrl);
 			const tickets = await response.json();
 			return res.status(200).json(tickets);
@@ -21,19 +22,18 @@ export default async function handler(
 	if (req.method === 'POST') {
 		try {
 			const newTicket = req.body;
-			const { url } = await fetch(
-				'https://clgltu8txlutapga.public.blob.vercel-storage.com/tickets-pyCCTdxBoXrL01AhJ87jpa1SEMqUOV.json'
-			);
-			const response = await fetch(url);
+
+			const response = await fetch(blobUrl);
 			const tickets = await response.json();
 			const updatedTickets = [...tickets, newTicket];
 
 			const updatedBlob = await put(
-				'https://clgltu8txlutapga.public.blob.vercel-storage.com/tickets-pyCCTdxBoXrL01AhJ87jpa1SEMqUOV.json',
+				'tickets.json',
 				JSON.stringify(updatedTickets, null, 2),
 				{
 					access: 'public',
-					token: process.env.VERCEL_BLOB_READ_WRITE_TOKEN,
+					// only include token if needed
+					// token: process.env.VERCEL_BLOB_READ_WRITE_TOKEN,
 				}
 			);
 
