@@ -28,12 +28,13 @@ export default async function handler(
 			const updatedTickets = [...tickets, newTicket];
 
 			const updatedBlob = await put(
-				'tickets-pyCCTdxBoXrL01AhJ87jpa1SEMqUOV.json',
+				'tickets.json',
 				JSON.stringify(updatedTickets, null, 2),
 				{
 					access: 'public',
 					// only include token if needed
 					token: process.env.VERCEL_BLOB_READ_WRITE_TOKEN,
+					allowOverwrite: true,
 				}
 			);
 
