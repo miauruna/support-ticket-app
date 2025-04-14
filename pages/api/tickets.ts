@@ -28,7 +28,7 @@ export default async function handler(
 			const updatedTickets = [...tickets, newTicket];
 
 			const updatedBlob = await put(
-				'tickets.json',
+				'tickets-pyCCTdxBoXrL01AhJ87jpa1SEMqUOV.json',
 				JSON.stringify(updatedTickets, null, 2),
 				{
 					access: 'public',
