@@ -33,7 +33,7 @@ export default async function handler(
 				{
 					access: 'public',
 					// only include token if needed
-					// token: process.env.VERCEL_BLOB_READ_WRITE_TOKEN,
+					token: process.env.VERCEL_BLOB_READ_WRITE_TOKEN,
 				}
 			);
 
