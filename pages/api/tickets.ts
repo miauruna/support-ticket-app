@@ -21,13 +21,15 @@ export default async function handler(
 	if (req.method === 'POST') {
 		try {
 			const newTicket = req.body;
-			const { url } = await fetch('tickets.json');
+			const { url } = await fetch(
+				'https://clgltu8txlutapga.public.blob.vercel-storage.com/tickets-pyCCTdxBoXrL01AhJ87jpa1SEMqUOV.json'
+			);
 			const response = await fetch(url);
 			const tickets = await response.json();
 			const updatedTickets = [...tickets, newTicket];
 
 			const updatedBlob = await put(
-				'tickets.json',
+				'https://clgltu8txlutapga.public.blob.vercel-storage.com/tickets-pyCCTdxBoXrL01AhJ87jpa1SEMqUOV.json',
 				JSON.stringify(updatedTickets, null, 2),
 				{
 					access: 'public',
