@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { put } from '@vercel/blob';
 
 const blobUrl =
-	'https://clgltu8txlutapga.public.blob.vercel-storage.com/tickets-pyCCTdxBoXrL01AhJ87jpa1SEMqUOV.json';
+	'https://clgltu8txlutapga.public.blob.vercel-storage.com/tickets.json';
 
 export default async function handler(
 	req: NextApiRequest,
