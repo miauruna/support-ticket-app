@@ -8,7 +8,7 @@ export default async function handler(
 	if (req.method === 'GET') {
 		try {
 			const blobUrl =
-				'https://mirunas-projects.vercel-storage.com/tickets.json';
+				'https://clgltu8txlutapga.public.blob.vercel-storage.com/tickets-pyCCTdxBoXrL01AhJ87jpa1SEMqUOV.json';
 			const response = await fetch(blobUrl);
 			const tickets = await response.json();
 			return res.status(200).json(tickets);
